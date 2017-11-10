@@ -37,11 +37,12 @@ module.exports = {
 	},
 
 	destroy(req, res) {
+		console.log('REQ? ', req)
 		return TodoItem
 			.find({
 				where: {
 					id: req.params.todoItemId,
-					todoId: req.params.todoId
+					todoId: req.params.todoId,
 				},
 			})
 			.then(todoItem => {
@@ -53,7 +54,10 @@ module.exports = {
 				}
 				todoItem
 					.destroy()
-					.then(() => res.status(400).send())
+					.then(() => res.status(204).send({
+						message: 'TodoItem Deleted Successfully',
+						data: req.body
+					}))
 					.catch(error => res.status(400).send('TodoItem Destroy error: ', error));
 			})
 			.catch(error => res.status(400).send('TodoItem Destroy Find By Item error: ', error))

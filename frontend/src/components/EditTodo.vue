@@ -10,6 +10,8 @@
     <br />
     <div>
       <h3>Add Item</h3>
+      <input type="text" placeholder="Content?" v-model="content">
+      <button @click="addItem">Add</button>
     </div>
     <br />
     <div>
@@ -19,6 +21,8 @@
           <input type="text" v-model="todoItems[i].content">
           <button @click="updateItemContent(item.id, i)">Edit</button>
           <button @click="updateItemComplete(item.id, i)">{{ todoItems[i].complete }}</button>
+          <br />
+          <button @click="deleteItem(item.id)">Delete</button>
         </li>
       </ul>
     </div>
@@ -36,7 +40,8 @@ export default {
     return {
       h2: '',
       title: '',
-      todoItems: []
+      todoItems: [],
+      content: ''
     }
   },
 
@@ -64,6 +69,14 @@ export default {
       this.todoItems = resp.data.todoItems
     },
 
+    async addItem () {
+      const resp = await TodoItemService.addItem({
+        todoId: this.$route.params.todoId,
+        content: this.content
+      })
+      this.todoItems.push(resp.data)
+    },
+
     async updateItemContent (itemId, i) {
       await TodoItemService.updateItem({
         todoId: this.$route.params.todoId,
@@ -79,7 +92,20 @@ export default {
         complete: !this.todoItems[i].complete
       })
       this.todoItems[i].complete = resp.data.complete
+    },
+
+    async deleteItem (itemId) {
+      await TodoItemService.deleteItem({
+        itemId: itemId,
+        todoId: this.$route.params.todoId
+      })
+      for (let i = 0; i < this.todoItems.length; i++) {
+        if (this.todoItems[i].id === itemId) {
+          this.todoItems[i].splice(i, 1)
+        }
+      }
     }
+
   }
 }
 </script>
