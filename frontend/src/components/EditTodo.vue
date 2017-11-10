@@ -98,12 +98,13 @@ export default {
       await TodoItemService.deleteItem({
         itemId: itemId,
         todoId: this.$route.params.todoId
-      })
-      for (let i = 0; i < this.todoItems.length; i++) {
-        if (this.todoItems[i].id === itemId) {
-          this.todoItems[i].splice(i, 1)
+      }).then(() => {
+        for (let i = 0; i < this.todoItems.length; i++) {
+          if (this.todoItems[i].id === itemId) {
+            this.todoItems.splice(i, 1)
+          }
         }
-      }
+      })
     }
 
   }
